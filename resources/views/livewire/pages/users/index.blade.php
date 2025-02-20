@@ -64,37 +64,53 @@ new class extends Component {
     }
 };
 ?>
-
-<div class="p-5">
-    @if (session()->has('message'))
-        <div class="alert alert-success">
-            {{ session('message') }}
+<div class="p-4">
+    <div class="breadcrumbs text-sm">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li>Users</li>
+        </ul>
+    </div>
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">Users</h2>
+            @if (session()->has('message'))
+            <p>{{ session('message') }}</p>
+        @endif
+            <div class="flex justify-between">
+                <input type="text" class="input input-bordered w-full max-w-xs"
+                       wire:model.lazy="search" placeholder="Type name"/>
+                <a href="{{ route('users.create') }}" class="btn btn-primary">Create</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <!-- head -->
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($users as $item)
+                        <tr>
+                            <td>{{ $item->id }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->email }}</td>
+                            <td>
+                                <a href="{{ route('users.edit',$item->id) }}" class="btn btn-xs btn-warning">Edit</a>
+                                <button wire:confirm="Are you sure?" wire:click="delete({{ $item->id }})"
+                                        class="btn btn-xs btn-error">Delete
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+            {{ $users->links() }}
         </div>
-    @endif
-    @if (session()->has('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <input type="text" wire:model.lazy="search">
-    <a href="{{ route('users.create') }}">
-        <button class="btn btn-primary">Create</button>
-    </a>
-
-    <h3>Tambah User</h3>
-    <input type="text" wire:model="username" placeholder="Username">
-    <input type="email" wire:model="email" placeholder="Email">
-    <input type="password" wire:model="password" placeholder="Password">
-    <button class="btn btn-success" wire:click="create">Tambah</button>
-
-    <ul>
-        @foreach($users as $item)
-            <li>
-                <a href="{{ route('users.edit',$item->id) }}">{{ $item->name }}</a>
-                <button class="btn btn-danger" wire:click="delete({{ $item->id }})" wire:confirm="lol">Delete</button>
-            </li>
-        @endforeach
-    </ul>
-    {{ $users->links() }}
+    </div>
 </div>
